@@ -7,6 +7,14 @@ docker volume create northwind-volume
 ## Run db 
 docker run -d --name northwind-db --network northwind-network -v northwind-volume:/var/lib/mysql stackupiss/northwind-db:v1
 
+#### verify db ####
+docker exec -it northwind-db bash
+mysql -uroot -p -- enter DB_PASSWORD
+show databases;
+use northwind;
+select * from customers;
+
+
 ## Run the app 01
 docker run -d -p 8080:3000 --name northwind-app01 --network northwind-network \
   -e DB_HOST=northwind-db \
