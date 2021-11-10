@@ -12,7 +12,7 @@ spec:
   - port: 8080 
     targetPort: 3000   
   selector:
-    app: bgg
+    app: bgg-app
   
 ---
 apiVersion: apps/v1
@@ -27,15 +27,15 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: bgg
+      app: bgg-app
   template:
     metadata:
       labels:
-        app: bgg
+        app: bgg-app
     spec:
       containers:
       - image: stackupiss/bgg-backend:v1
-        name: bgg      
+        name: bgg-app      
         ports:
         - containerPort: 3000          
         env:
