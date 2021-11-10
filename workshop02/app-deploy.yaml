@@ -1,0 +1,49 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bggapp-svc
+  labels:
+    app: bgg
+  namespace: bggns
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080 
+    targetPort: 3000   
+  selector:
+    app: bgg
+  
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bggapp-deploy
+  labels:
+    app: bgg
+    owner: senaka
+  namespace: bggns
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: bgg
+  template:
+    metadata:
+      labels:
+        app: bgg
+    spec:
+      containers:
+      - image: stackupiss/bgg-backend:v1
+        name: bgg      
+        ports:
+        - containerPort: 3000          
+        env:
+          - name: BGG_DB_USER
+            value: root
+          - name: BGG_DB_HOST
+            value: bggdb.bggns.svc.cluster.local
+          - name: BGG_DB_PASSWORD
+            value: changeit
+          
+  
