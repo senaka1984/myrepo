@@ -1,0 +1,30 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bggdb-svc
+  labels:
+    app: bgg-database
+    owner: senaka
+  namespace: myns
+spec:
+  selector:
+    matchLabels:
+      app: bggdb-svc  
+  template:
+    metadata:
+      labels:
+        app: bggdb-svc
+    spec:
+      containers:
+      - image: stackupiss/bgg-database:v1
+        name: bggdb-svc-pod
+        env:        
+        - name: MYSQL_ROOT_PASSWORD
+          value: changeit
+        ports:
+        - containerPort: 3306
+          name: mysql
+        
+          
+  
