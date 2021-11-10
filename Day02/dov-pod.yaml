@@ -1,0 +1,31 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dov-configmap
+  labels:
+    tier: 2d
+data:
+   INSTANCE_NAME: name set from ConfigMap
+   INSTANCE_HASH: 123xyz 
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dov-pod
+  labels:
+    app: dov-bear
+    owner: senaka
+  namespace: myns
+spec:
+  containers:
+    - name: dov
+      image: senaka84/mydovbear:v2
+      imagePullPolicy: IfNotPresent
+      ports:
+        - containerPort: 3000
+          name: web
+      envFrom:
+        - configMapRef:
+            name: dov-configmap
