@@ -40,10 +40,19 @@ spec:
         - containerPort: 3000          
         env:
           - name: BGG_DB_USER
-            value: root
+            valueFrom:
+              configMapKeyRef:
+                name: dbconfig
+                key: bgg_db_user
           - name: BGG_DB_HOST
-            value: bggdb.bggns.svc.cluster.local
+            valueFrom:
+              configMapKeyRef:
+                name: dbconfig
+                key: bgg_db_host   
           - name: BGG_DB_PASSWORD
-            value: changeit
-          
+            valueFrom:
+              secretKeyRef:
+                name: dbsecret
+                key: bgg_db_password  
+
   
