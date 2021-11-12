@@ -1,66 +1,57 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: wordpress-mysql
-  labels:
-    app: wordpress
-spec:
-  ports:
-    - port: 3306
-  selector:
-    app: wordpress
-    tier: mysql
-  clusterIP: None
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: wordpress-mysql
+#  labels:
+#    app: wordpress
+#spec:
+#  ports:
+#    - port: 3306
+#  selector:
+#    app: wordpress
+#    tier: mysql
+#  clusterIP: None
 ---
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: mysql-pv-claim
-  labels:
-    app: wordpress
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
+#apiVersion: v1
+#kind: PersistentVolumeClaim
+#metadata:
+#  name: mysql-pv-claim
+#  labels:
+#    app: wordpress
+#spec:
+#  accessModes:
+#    - ReadWriteOnce
+#  resources:
+#    requests:
+#      storage: 1Gi
 ---
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: mysql.presslabs.org/v1alpha1
+kind: MysqlCluster
 metadata:
-  name: wordpress-mysql
-  labels:
-    app: wordpress
+   name: wp-cluster
+   labels:
+      name: wp-cluster
 spec:
-  selector:
-    matchLabels:
-      app: wordpress
-      tier: mysql
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      labels:
-        app: wordpress
-        tier: mysql
-    spec:
-      containers:
-      - image: mysql:5.6
-        name: mysql
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mysql-pass
-              key: password
-        ports:
-        - containerPort: 3306
-          name: mysql
-        volumeMounts:
-        - name: mysql-persistent-storage
-          mountPath: /var/lib/mysql
-      volumes:
-      - name: mysql-persistent-storage
-        persistentVolumeClaim:
-          claimName: mysql-pv-claim
+   replicas: 2
+   secretName: wp-dbsecret
+   #persistentVolumeClaim:
+   #   accessModes:
+   #   - ReadWriteOnce
+   #   storageClassName: do-block-storage 
+   #   resources:
+   #      requests:
+   #         storage: 1Gi
 
+---
+apiVersion: mysql.presslabs.org/v1alpha1
+kind: MysqlDatabase
+metadata:
+   name: wpdb-db
+   labels:
+      name: wpdb-db
+spec:
+   database: wpdb
+   clusterRef:
+      name: wpdb-cluster
+
+    
