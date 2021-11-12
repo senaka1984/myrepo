@@ -40,8 +40,7 @@ spec:
         app: bgg-app
     spec:
       containers:
-      - image: stackupiss/bgg-backend:v2
-        
+      - image: stackupiss/bgg-backend:v2        
         name: bgg-app      
         ports:
         - containerPort: 3000          

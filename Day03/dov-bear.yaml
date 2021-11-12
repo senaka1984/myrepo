@@ -1,0 +1,53 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dov-configmap
+  labels:
+    tier: 2d
+data:
+   INSTANCE_NAME: name set from ConfigMap   
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dov-deploy
+  labels:
+    app: dov-deploy
+    owner: senaka
+  namespace: myns
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dov-pod
+  template:
+    metadata:
+      name: my-deploy
+      labels:
+        app: dov-pod
+    spec:
+      volumes:
+        - name: config-vol
+          configMap:
+            name: myconfig
+      containers:
+        - name: dov-container
+          image: senaka84/mydovbear:v2
+          imagePullPolicy: IfNotPresent
+          ports:
+           - containerPort: 3000
+             name: web
+          env:
+            - name: INSTANCE_HASH
+              valueFrom:
+                fieldRef: 
+                  fieldPath: status.podIP
+          envFrom:
+            - configMapRef:
+               name: dov-configmap
+          volumeMounts:
+            - mountPath: config #make sure this path is not in container
+              name: config-vol
+  

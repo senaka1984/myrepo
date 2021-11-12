@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myconfig
+  labels:
+    app: dev
+data:
+   hash_value: 12345XT
+   hosts: |
+     127.0 
+     250.3.3
+     153.25
+
+     
+    
